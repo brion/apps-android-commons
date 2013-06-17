@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -267,13 +266,11 @@ public class ContributionsListFragment extends SherlockFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear(); // See http://stackoverflow.com/a/8495697/17865
         inflater.inflate(R.menu.fragment_contributions_list, menu);
-        menu.findItem(R.id.menu_from_camera).setVisible(deviceHasCamera());
-    }
 
-    private boolean deviceHasCamera() {
-        PackageManager pm = getActivity().getPackageManager();
-        return pm.hasSystemFeature(PackageManager.FEATURE_CAMERA) ||
-               pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT);
+        CommonsApplication app = (CommonsApplication)getActivity().getApplicationContext();
+        if (!app.deviceHasCamera()) {
+            menu.findItem(R.id.menu_from_camera).setEnabled(false);
+        }
     }
 
     @Override
