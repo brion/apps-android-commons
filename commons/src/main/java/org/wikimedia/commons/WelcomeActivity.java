@@ -9,6 +9,11 @@ import android.view.ViewGroup;
 
 public class WelcomeActivity extends Activity {
     private ViewPager pager;
+    static int[] pageLayouts = new int[] {
+            R.layout.welcome_wikipedia,
+            R.layout.welcome_copyright,
+            R.layout.welcome_final
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,18 +34,14 @@ public class WelcomeActivity extends Activity {
 
             @Override
             public Object instantiateItem(ViewGroup container, int position) {
-                int[] items = new int[] {
-                        R.layout.welcome_wikipedia,
-                        R.layout.welcome_copyright,
-                        R.layout.welcome_final
-                };
-                View view = getLayoutInflater().inflate(items[position], container);
+                View view = getLayoutInflater().inflate(pageLayouts[position], null);
+                container.addView(view);
                 return view;
             }
 
             @Override
             public void destroyItem(ViewGroup container, int position, Object obj) {
-                container.removeAllViews();
+                container.removeView((View)obj);
             }
         });
     }
