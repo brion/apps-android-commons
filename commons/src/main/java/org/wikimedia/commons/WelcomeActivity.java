@@ -7,7 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.viewpagerindicator.TitlePageIndicator;
+import com.viewpagerindicator.CirclePageIndicator;
 
 public class WelcomeActivity extends Activity {
     private ViewPager pager;
@@ -23,9 +23,6 @@ public class WelcomeActivity extends Activity {
         setContentView(R.layout.activity_welcome);
 
         pager = (ViewPager)findViewById(R.id.welcomePager);
-        TitlePageIndicator titleIndicator = (TitlePageIndicator)findViewById(R.id.welcomePagerIndicator);
-        titleIndicator.setViewPager(pager);
-
         pager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
@@ -49,5 +46,8 @@ public class WelcomeActivity extends Activity {
                 container.removeView((View)obj);
             }
         });
+
+        CirclePageIndicator indicator = (CirclePageIndicator)findViewById(R.id.welcomePagerIndicator);
+        indicator.setViewPager(pager);
     }
 }
