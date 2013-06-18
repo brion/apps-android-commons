@@ -7,6 +7,8 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.viewpagerindicator.TitlePageIndicator;
+
 public class WelcomeActivity extends Activity {
     private ViewPager pager;
     static int[] pageLayouts = new int[] {
@@ -21,6 +23,9 @@ public class WelcomeActivity extends Activity {
         setContentView(R.layout.activity_welcome);
 
         pager = (ViewPager)findViewById(R.id.welcomePager);
+        TitlePageIndicator titleIndicator = (TitlePageIndicator)findViewById(R.id.welcomePagerIndicator);
+        titleIndicator.setViewPager(pager);
+
         pager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
