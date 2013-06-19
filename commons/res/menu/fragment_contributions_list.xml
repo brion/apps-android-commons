@@ -26,11 +26,5 @@
           android:showAsAction="never"
           android:icon="@android:drawable/ic_menu_send"
             />
-    <item android:id="@+id/menu_welcome"
-          android:title="Welcome screen"
-          android:showAsAction="never"
-          android:icon="@android:drawable/ic_menu_info_details"
-            />
-
 
 </menu>

@@ -257,10 +257,6 @@ public class ContributionsListFragment extends SherlockFragment {
                 feedbackIntent.putExtra(Intent.EXTRA_SUBJECT, String.format(CommonsApplication.FEEDBACK_EMAIL_SUBJECT, CommonsApplication.APPLICATION_VERSION));
                 startActivity(feedbackIntent);
                 return true;
-            case R.id.menu_welcome:
-                Intent welcomeIntent = new Intent(getActivity(), WelcomeActivity.class);
-                startActivity(welcomeIntent);
-                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
