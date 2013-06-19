@@ -167,6 +167,11 @@ public class LoginActivity extends AccountAuthenticatorActivity {
                 that.performLogin();
             }
         });
+
+        if (savedInstanceState == null) {
+            Intent welcomeIntent = new Intent(this, WelcomeActivity.class);
+            startActivity(welcomeIntent);
+        }
     }
 
     private void performLogin() {

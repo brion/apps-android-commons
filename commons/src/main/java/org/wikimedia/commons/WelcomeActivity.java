@@ -6,16 +6,22 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.viewpagerindicator.CirclePageIndicator;
 
 public class WelcomeActivity extends Activity {
-    private ViewPager pager;
-    static int[] pageLayouts = new int[] {
+    static final int PAGE_WIKIPEDIA = 0,
+            PAGE_COPYRIGHT = 1,
+            PAGE_FINAL = 2;
+    static final int[] pageLayouts = new int[] {
             R.layout.welcome_wikipedia,
             R.layout.welcome_copyright,
             R.layout.welcome_final
     };
+
+    private ViewPager pager;
+    private Button yesButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,5 +55,28 @@ public class WelcomeActivity extends Activity {
 
         CirclePageIndicator indicator = (CirclePageIndicator)findViewById(R.id.welcomePagerIndicator);
         indicator.setViewPager(pager);
+
+        indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            public void onPageScrolled(int i, float v, int i2) {
+
+            }
+
+            public void onPageSelected(int i) {
+                if (i == PAGE_FINAL) {
+                    yesButton = (Button)findViewById(R.id.welcomeYesButton);
+                    yesButton.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View view) {
+                            finish();
+                        }
+                    });
+                } else {
+                    yesButton = null;
+                }
+            }
+
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
     }
 }
