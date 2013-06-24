@@ -5,6 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
@@ -14,7 +15,10 @@
    height="1024"
    sodipodi:version="0.32"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="Commons-logo.svg">
+   sodipodi:docname="ic_launcher.svg"
+   inkscape:export-filename="/home/brion/src/wiki/apps-android-commons/scratch/icon-mono/ic_launcher_512.png"
+   inkscape:export-xdpi="45"
+   inkscape:export-ydpi="45">
   <metadata
      id="metadata4466">
     <rdf:RDF>
@@ -37,7 +41,7 @@
      pagecolor="#ffffff"
      id="base"
      inkscape:zoom="0.54360466"
-     inkscape:cx="440.25669"
+     inkscape:cx="331.72193"
      inkscape:cy="614.41712"
      inkscape:window-x="0"
      inkscape:window-y="27"
@@ -46,6 +50,17 @@
      inkscape:window-maximized="1" />
   <defs
      id="defs4438">
+    <linearGradient
+       id="linearGradient4455">
+      <stop
+         style="stop-color:#e6e6e6;stop-opacity:1;"
+         offset="0"
+         id="stop4457" />
+      <stop
+         style="stop-color:#f8f8f8;stop-opacity:1;"
+         offset="1"
+         id="stop4459" />
+    </linearGradient>
     <clipPath
        id="boundary">
       <circle
@@ -70,6 +85,15 @@
          sodipodi:rx="298"
          sodipodi:ry="298" />
     </clipPath>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4455"
+       id="linearGradient4461"
+       x1="-4.9732804"
+       y1="-510.50797"
+       x2="-4.9732804"
+       y2="97.978714"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <g
      id="g3652"
@@ -91,7 +115,7 @@
          height="607.05884"
          width="607.05884"
          id="rect3646"
-         style="fill:#e6e6e6" />
+         style="fill:url(#linearGradient4461);fill-opacity:1" />
     </g>
     <g
        style="fill:#000000"
