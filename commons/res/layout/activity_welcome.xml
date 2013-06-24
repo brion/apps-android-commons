@@ -16,7 +16,7 @@
 
     <com.viewpagerindicator.CirclePageIndicator
             android:id="@+id/welcomePagerIndicator"
-            android:layout_height="20dp"
+            android:layout_height="24dp"
             android:layout_width="fill_parent"
             android:layout_gravity="bottom" />
 
