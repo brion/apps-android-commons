@@ -44,39 +44,25 @@ public class WelcomeActivity extends Activity {
             public Object instantiateItem(ViewGroup container, int position) {
                 View view = getLayoutInflater().inflate(pageLayouts[position], null);
                 container.addView(view);
+                if (position == PAGE_FINAL) {
+                    yesButton = (Button)view.findViewById(R.id.welcomeYesButton);
+                    yesButton.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View view) {
+                            finish();
+                        }
+                    });
+                }
                 return view;
             }
 
             @Override
             public void destroyItem(ViewGroup container, int position, Object obj) {
+                yesButton = null;
                 container.removeView((View)obj);
             }
         });
 
         CirclePageIndicator indicator = (CirclePageIndicator)findViewById(R.id.welcomePagerIndicator);
         indicator.setViewPager(pager);
-
-        indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            public void onPageScrolled(int i, float v, int i2) {
-
-            }
-
-            public void onPageSelected(int i) {
-                if (i == PAGE_FINAL) {
-                    yesButton = (Button)findViewById(R.id.welcomeYesButton);
-                    yesButton.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View view) {
-                            finish();
-                        }
-                    });
-                } else {
-                    yesButton = null;
-                }
-            }
-
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });
     }
 }
