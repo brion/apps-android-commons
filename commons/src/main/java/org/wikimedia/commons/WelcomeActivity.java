@@ -32,7 +32,7 @@ public class WelcomeActivity extends Activity {
         pager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
-                return 3;
+                return pageLayouts.length;
             }
 
             @Override
