@@ -1,9 +1,12 @@
 package org.wikimedia.commons.media;
 
+import android.content.Intent;
 import android.graphics.*;
+import android.net.Uri;
 import android.os.*;
 import android.text.*;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.*;
 import android.widget.*;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -14,7 +17,12 @@ import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 
 import com.android.volley.toolbox.*;
 
+import org.mediawiki.api.ApiResult;
+import org.mediawiki.api.MWApi;
 import org.wikimedia.commons.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class MediaDetailFragment extends SherlockFragment {
 
@@ -40,9 +48,17 @@ public class MediaDetailFragment extends SherlockFragment {
     }
 
     private ImageView image;
-    private EditText title;
+    //private EditText title;
     private ProgressBar loadingProgress;
     private ImageView loadingFailed;
+    private MediaDetailSpacer spacer;
+    private TextView title;
+    private TextView desc;
+    private ListView listView;
+    private ArrayList<String> categoryNames;
+    private ArrayAdapter categoryAdapter;
+    private ViewTreeObserver.OnGlobalLayoutListener observer; // for layout stuff, only used once!
+    private AsyncTask<Void,Void,Void> detailFetchTask;
 
 
     @Override
@@ -64,14 +80,36 @@ public class MediaDetailFragment extends SherlockFragment {
             index = getArguments().getInt("index");
         }
         final Media media = detailProvider.getMediaAtPosition(index);
+        categoryNames = new ArrayList<String>();
 
-        View view = inflater.inflate(R.layout.fragment_media_detail, container, false);
+        final View view = inflater.inflate(R.layout.fragment_media_detail, container, false);
+
         image = (ImageView) view.findViewById(R.id.mediaDetailImage);
-        title = (EditText) view.findViewById(R.id.mediaDetailTitle);
         loadingProgress = (ProgressBar) view.findViewById(R.id.mediaDetailImageLoading);
         loadingFailed = (ImageView) view.findViewById(R.id.mediaDetailImageFailed);
+        listView = (ListView) view.findViewById(R.id.mediaDetailListView);
+
+        // Detail consists of a list view with main pane in header view, plus category list.
+        View detailView = getActivity().getLayoutInflater().inflate(R.layout.detail_main_panel, null, false);
+        listView.addHeaderView(detailView, null, false);
+        categoryAdapter = new ArrayAdapter(getActivity(), R.layout.detail_category_item, categoryNames);
+        listView.setAdapter(categoryAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String selectedCategoryTitle = "Category:" + categoryNames.get(position - 1);
+                Intent viewIntent = new Intent();
+                viewIntent.setAction(Intent.ACTION_VIEW);
+                viewIntent.setData(Utils.uriForWikiPage(selectedCategoryTitle));
+                startActivity(viewIntent);
+            }
+        });
+
+        spacer = (MediaDetailSpacer) detailView.findViewById(R.id.mediaDetailSpacer);
+        title = (TextView) detailView.findViewById(R.id.mediaDetailTitle);
+        desc = (TextView) detailView.findViewById(R.id.mediaDetailDesc);
 
         // Enable or disable editing on the title
+        /*
         title.setClickable(editable);
         title.setFocusable(editable);
         title.setCursorVisible(editable);
@@ -79,6 +117,8 @@ public class MediaDetailFragment extends SherlockFragment {
         if(!editable) {
             title.setBackgroundDrawable(null);
         }
+        */
+
 
         String actualUrl = TextUtils.isEmpty(media.getImageUrl()) ? media.getLocalUri().toString() : media.getThumbnailUrl(640);
         if(actualUrl.startsWith("http")) {
@@ -88,6 +128,46 @@ public class MediaDetailFragment extends SherlockFragment {
             mwImage.setMedia(media, loader);
             Log.d("Volley", actualUrl);
             // FIXME: For transparent images
+
+            // Load image metadata: desc, license, categories
+            // FIXME: keep the spinner going while we load data
+            // FIXME: cache this data
+            detailFetchTask = new AsyncTask<Void, Void, Void>() {
+                private String fileTitle;
+                private MediaDetailInfo info;
+
+                @Override
+                protected void onPreExecute() {
+                    fileTitle = media.getFilename();
+                }
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    try {
+                        MediaDataExtractor extractor = new MediaDataExtractor(fileTitle);
+                        extractor.fetch();
+                        info = extractor.getInfo();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    detailFetchTask = null;
+
+                    if (info != null) {
+                        // Fill some fields
+                        desc.setText(info.getDescription("en"));
+
+                        categoryNames.removeAll(categoryNames);
+                        categoryNames.addAll(info.getCategories());
+                        categoryAdapter.notifyDataSetChanged();
+                    }
+                }
+            };
+            Utils.executeAsyncTask(detailFetchTask);
         } else {
             com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(actualUrl, image, displayOptions, new ImageLoadingListener() {
                 public void onLoadingStarted(String s, View view) {
@@ -113,8 +193,11 @@ public class MediaDetailFragment extends SherlockFragment {
                 }
             });
         }
-        title.setText(media.getDisplayTitle());
 
+        title.setText(media.getDisplayTitle());
+        desc.setText("");
+
+        /*
         title.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
 
@@ -130,6 +213,32 @@ public class MediaDetailFragment extends SherlockFragment {
 
             }
         });
+        */
+
+        // Layout observer to size the spacer item relative to the available space.
+        // There may be a .... better way to do this.
+        observer = new ViewTreeObserver.OnGlobalLayoutListener() {
+            private int currentHeight = -1;
+
+            public void onGlobalLayout() {
+                int viewHeight = view.getHeight();
+                //int textHeight = title.getLineHeight();
+                int paddingDp = 48;
+                float paddingPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, paddingDp, getResources().getDisplayMetrics());
+                int newHeight = viewHeight - Math.round(paddingPx);
+
+                if (newHeight != currentHeight) {
+                    currentHeight = newHeight;
+                    ViewGroup.LayoutParams params = spacer.getLayoutParams();
+                    params.height = newHeight;
+                    spacer.setLayoutParams(params);
+
+                    // hack hack to trigger relayout
+                    categoryAdapter.notifyDataSetChanged();
+                }
+            }
+        };
+        view.getViewTreeObserver().addOnGlobalLayoutListener(observer);
         return view;
     }
 
@@ -138,5 +247,18 @@ public class MediaDetailFragment extends SherlockFragment {
         super.onActivityCreated(savedInstanceState);
 
         displayOptions = Utils.getGenericDisplayOptions().build();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (detailFetchTask != null) {
+            detailFetchTask.cancel(true);
+            detailFetchTask = null;
+        }
+        if (observer != null) {
+            getView().getViewTreeObserver().removeGlobalOnLayoutListener(observer); // old Android was on crack. CRACK IS WHACK
+            observer = null;
+        }
+        super.onDestroyView();
     }
 }
