@@ -51,9 +51,8 @@ public class MediaDetailFragment extends SherlockFragment {
     private TextView source;
     private TextView license;
     private TextView desc;
-    private ListView categoryList;
+    private LinearLayout categoryList;
     private ArrayList<String> categoryNames;
-    private ArrayAdapter categoryAdapter;
 
 
     @Override
@@ -84,11 +83,8 @@ public class MediaDetailFragment extends SherlockFragment {
         desc = (TextView) view.findViewById(R.id.mediaDetailDesc);
         source = (TextView) view.findViewById(R.id.mediaDetailSource);
         license = (TextView) view.findViewById(R.id.mediaDetailLicense);
-        categoryList = (ListView) view.findViewById(R.id.mediaDetailCategoryList);
+        categoryList = (LinearLayout) view.findViewById(R.id.mediaDetailCategoryList);
         categoryNames = new ArrayList<String>();
-
-        categoryAdapter = new ArrayAdapter(getActivity(), R.layout.detail_category_item, categoryNames);
-        categoryList.setAdapter(categoryAdapter);
 
         // Enable or disable editing on the title
         /*
@@ -118,6 +114,7 @@ public class MediaDetailFragment extends SherlockFragment {
 
                 @Override
                 protected Void doInBackground(Void... voids) {
+                    cats = new ArrayList<String>();
                     MWApi api = CommonsApplication.createMWApi();
                     try {
                         ApiResult result = api.action("query")
@@ -135,7 +132,6 @@ public class MediaDetailFragment extends SherlockFragment {
                         Log.d("Commons", "wiki: " + wikiSource);
                         Log.d("Commons", "xml: " + parseTreeXmlSource);
 
-                        cats = new ArrayList<String>();
                         for (ApiResult cl : result.getNodes("/api/query/pages/page/categories/cl")) {
                             cats.add(cl.getString("@title"));
                         }
@@ -147,9 +143,13 @@ public class MediaDetailFragment extends SherlockFragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    categoryNames.removeAll(categoryNames);
-                    categoryNames.addAll(cats);
-                    categoryAdapter.notifyDataSetChanged();
+                    categoryNames = cats;
+                    categoryList.removeAllViews();
+                    for (String name : categoryNames) {
+                        TextView view = (TextView)getActivity().getLayoutInflater().inflate(R.layout.detail_category_item, null, false);
+                        view.setText(name);
+                        categoryList.addView(view);
+                    }
                 }
             });
         } else {

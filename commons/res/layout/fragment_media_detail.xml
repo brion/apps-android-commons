@@ -51,7 +51,8 @@
                     android:layout_height="wrap_content"
                     android:text="Categories"
                     android:layout_gravity="left|center_vertical" android:paddingTop="24dp"/>
-            <ListView
+            <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/mediaDetailCategoryList" android:layout_gravity="left|center_vertical"/>
