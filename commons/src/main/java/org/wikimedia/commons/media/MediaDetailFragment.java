@@ -14,7 +14,11 @@ import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 
 import com.android.volley.toolbox.*;
 
+import org.mediawiki.api.ApiResult;
+import org.mediawiki.api.MWApi;
 import org.wikimedia.commons.*;
+
+import java.io.IOException;
 
 public class MediaDetailFragment extends SherlockFragment {
 
@@ -40,9 +44,13 @@ public class MediaDetailFragment extends SherlockFragment {
     }
 
     private ImageView image;
-    private EditText title;
+    //private EditText title;
     private ProgressBar loadingProgress;
     private ImageView loadingFailed;
+    private TextView source;
+    private TextView license;
+    private TextView desc;
+    private ListView categoryList;
 
 
     @Override
@@ -67,11 +75,16 @@ public class MediaDetailFragment extends SherlockFragment {
 
         View view = inflater.inflate(R.layout.fragment_media_detail, container, false);
         image = (ImageView) view.findViewById(R.id.mediaDetailImage);
-        title = (EditText) view.findViewById(R.id.mediaDetailTitle);
+        //title = (EditText) view.findViewById(R.id.mediaDetailTitle);
         loadingProgress = (ProgressBar) view.findViewById(R.id.mediaDetailImageLoading);
         loadingFailed = (ImageView) view.findViewById(R.id.mediaDetailImageFailed);
+        desc = (TextView) view.findViewById(R.id.mediaDetailDesc);
+        source = (TextView) view.findViewById(R.id.mediaDetailSource);
+        license = (TextView) view.findViewById(R.id.mediaDetailLicense);
+        categoryList = (ListView) view.findViewById(R.id.mediaDetailCategoryList);
 
         // Enable or disable editing on the title
+        /*
         title.setClickable(editable);
         title.setFocusable(editable);
         title.setCursorVisible(editable);
@@ -79,6 +92,7 @@ public class MediaDetailFragment extends SherlockFragment {
         if(!editable) {
             title.setBackgroundDrawable(null);
         }
+        */
 
         String actualUrl = TextUtils.isEmpty(media.getImageUrl()) ? media.getLocalUri().toString() : media.getThumbnailUrl(640);
         if(actualUrl.startsWith("http")) {
@@ -88,6 +102,35 @@ public class MediaDetailFragment extends SherlockFragment {
             mwImage.setMedia(media, loader);
             Log.d("Volley", actualUrl);
             // FIXME: For transparent images
+
+            // Load image metadata: desc, license, categories
+            // FIXME: keep the spinner going while we load data
+            // FIXME: cache this data
+            Utils.executeAsyncTask(new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    MWApi api = CommonsApplication.createMWApi();
+                    try {
+                        ApiResult result = api.action("query")
+                                .param("prop", "revisions|categories")
+                                .param("titles", media.getFilename())
+                                .param("rvprop", "content")
+                                .param("rvlimit", 1)
+                                .param("rvgeneratexml", 1)
+                                .get();
+
+                        String wikiSource = result.getString("/api/query/pages/page/revisions/rev");
+                        String parseTreeXmlSource = result.getString("/api/query/pages/page/revisions/rev/@parsetree");
+
+                        Log.d("Commons", "media title: " + media.getFilename());
+                        Log.d("Commons", "wiki: " + wikiSource);
+                        Log.d("Commons", "xml: " + parseTreeXmlSource);
+                    } catch (IOException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                    return null;
+                }
+            });
         } else {
             com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(actualUrl, image, displayOptions, new ImageLoadingListener() {
                 public void onLoadingStarted(String s, View view) {
@@ -113,6 +156,9 @@ public class MediaDetailFragment extends SherlockFragment {
                 }
             });
         }
+
+        desc.setText(media.getDisplayTitle());
+        /*
         title.setText(media.getDisplayTitle());
 
         title.addTextChangedListener(new TextWatcher() {
@@ -130,6 +176,7 @@ public class MediaDetailFragment extends SherlockFragment {
 
             }
         });
+        */
         return view;
     }
 

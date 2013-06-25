@@ -28,31 +28,49 @@
                android:scaleType="fitCenter"
             />
 
-    <RelativeLayout
-            android:layout_width="fill_parent"
+    <ScrollView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center|bottom"
-            android:background="#AA000000"
-            android:padding="8dp"
-            >
-
-        <EditText
-                android:id="@+id/mediaDetailTitle"
+            android:id="@+id/scrollView">
+        <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+            <Space
+                    android:layout_width="fill_parent"
+                    android:layout_height="336dp"
+                    android:id="@+id/space"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Description of the image goes here. This can potentially be fairly long, and will need to wrap across multiple lines. We hope it looks nice though."
+                    android:id="@+id/mediaDetailDesc" android:layout_gravity="left|center_vertical"
+                    android:textColor="@android:color/white"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Categories"
+                    android:layout_gravity="left|center_vertical" android:paddingTop="24dp"/>
+            <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/mediaDetailCategoryList" android:layout_gravity="left|center_vertical"/>
+        </LinearLayout>
+    </ScrollView>
+    <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="48dp" android:layout_gravity="bottom"
+            android:background="@drawable/media_info_shadow">
+        <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="textNoSuggestions"
-                android:singleLine="true"
-                android:textColor="#FFFFFF"/>
-       <!-- <TextView
-                android:id="@+id/mediaDetailDescription"
-                android:layout_width="fill_parent"
+                android:text="Author Name"
+                android:id="@+id/mediaDetailSource" android:layout_gravity="bottom|left"/>
+        <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/mediaDetailTitle"
-                android:layout_alignParentBottom="true"
-                style="?android:textAppearanceSmall"
-                android:textColor="#FFFFFFFF"
-                /> -->
-    </RelativeLayout>
+                android:text="CC-BY-SAMPLE 3.0"
+                android:id="@+id/mediaDetailLicense" android:layout_gravity="bottom|right"/>
+    </FrameLayout>
 
 </FrameLayout>
