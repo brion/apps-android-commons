@@ -36,42 +36,44 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
+
+            <!-- Placeholder. Size is fictional, gets set at runtime based on container size. May be a better way to do this. -->
             <Space
                     android:layout_width="fill_parent"
                     android:layout_height="336dp"
                     android:id="@+id/space"/>
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Description of the image goes here. This can potentially be fairly long, and will need to wrap across multiple lines. We hope it looks nice though."
-                    android:id="@+id/mediaDetailDesc" android:layout_gravity="left|center_vertical"
-                    android:textColor="@android:color/white"/>
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Categories"
-                    android:layout_gravity="left|center_vertical" android:paddingTop="24dp"/>
             <LinearLayout
                     android:orientation="vertical"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/mediaDetailCategoryList" android:layout_gravity="left|center_vertical"/>
+                    android:background="#AA000000"
+                    android:padding="8dp">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Title of the media"
+                        android:id="@+id/mediaDetailTitle"
+                        android:layout_gravity="left|start"
+                        android:textColor="@android:color/white"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Description of the media goes here. This can potentially be fairly long, and will need to wrap across multiple lines. We hope it looks nice though."
+                        android:id="@+id/mediaDetailDesc"
+                        android:layout_gravity="left|start"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Categories"
+                        android:layout_gravity="left|start"
+                        android:paddingTop="24dp"/>
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/mediaDetailCategoryList"
+                        android:layout_gravity="left|start"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
-    <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="48dp" android:layout_gravity="bottom"
-            android:background="@drawable/media_info_shadow">
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Author Name"
-                android:id="@+id/mediaDetailSource" android:layout_gravity="bottom|left"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CC-BY-SAMPLE 3.0"
-                android:id="@+id/mediaDetailLicense" android:layout_gravity="bottom|right"/>
-    </FrameLayout>
-
-</FrameLayout>
+\</FrameLayout>

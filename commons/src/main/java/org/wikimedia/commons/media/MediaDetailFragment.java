@@ -48,8 +48,7 @@ public class MediaDetailFragment extends SherlockFragment {
     //private EditText title;
     private ProgressBar loadingProgress;
     private ImageView loadingFailed;
-    private TextView source;
-    private TextView license;
+    private TextView title;
     private TextView desc;
     private LinearLayout categoryList;
     private ArrayList<String> categoryNames;
@@ -77,12 +76,10 @@ public class MediaDetailFragment extends SherlockFragment {
 
         View view = inflater.inflate(R.layout.fragment_media_detail, container, false);
         image = (ImageView) view.findViewById(R.id.mediaDetailImage);
-        //title = (EditText) view.findViewById(R.id.mediaDetailTitle);
+        title = (TextView) view.findViewById(R.id.mediaDetailTitle);
         loadingProgress = (ProgressBar) view.findViewById(R.id.mediaDetailImageLoading);
         loadingFailed = (ImageView) view.findViewById(R.id.mediaDetailImageFailed);
         desc = (TextView) view.findViewById(R.id.mediaDetailDesc);
-        source = (TextView) view.findViewById(R.id.mediaDetailSource);
-        license = (TextView) view.findViewById(R.id.mediaDetailLicense);
         categoryList = (LinearLayout) view.findViewById(R.id.mediaDetailCategoryList);
         categoryNames = new ArrayList<String>();
 
@@ -178,10 +175,10 @@ public class MediaDetailFragment extends SherlockFragment {
             });
         }
 
-        desc.setText(media.getDisplayTitle());
-        /*
         title.setText(media.getDisplayTitle());
+        desc.setText("");
 
+        /*
         title.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
 
