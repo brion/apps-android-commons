@@ -75,7 +75,7 @@ public class MediaDetailFragment extends SherlockFragment {
         }
         final Media media = detailProvider.getMediaAtPosition(index);
 
-        View view = inflater.inflate(R.layout.fragment_media_detail, container, false);
+        final View view = inflater.inflate(R.layout.fragment_media_detail, container, false);
         image = (ImageView) view.findViewById(R.id.mediaDetailImage);
         spacer = (MediaDetailSpacer) view.findViewById(R.id.mediaDetailSpacer);
         title = (TextView) view.findViewById(R.id.mediaDetailTitle);
@@ -197,6 +197,13 @@ public class MediaDetailFragment extends SherlockFragment {
             }
         });
         */
+
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            public void onGlobalLayout() {
+                int height = view.getHeight();
+                spacer.setMinimumHeight(height - 120);
+            }
+        });
         return view;
     }
 
