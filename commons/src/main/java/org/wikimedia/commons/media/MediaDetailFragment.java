@@ -89,7 +89,7 @@ public class MediaDetailFragment extends SherlockFragment {
 
         // Detail consists of a list view with main pane in header view, plus category list.
         View detailView = getActivity().getLayoutInflater().inflate(R.layout.detail_main_panel, null, false);
-        listView.addHeaderView(detailView);
+        listView.addHeaderView(detailView, null, false);
         categoryAdapter = new ArrayAdapter(getActivity(), R.layout.detail_category_item, categoryNames);
         listView.setAdapter(categoryAdapter);
 
