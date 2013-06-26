@@ -38,10 +38,10 @@
                 android:layout_height="fill_parent">
 
             <!-- Placeholder. Size is fictional, gets set at runtime based on container size. May be a better way to do this. -->
-            <Space
+            <org.wikimedia.commons.media.MediaDetailSpacer
                     android:layout_width="fill_parent"
-                    android:layout_height="336dp"
-                    android:id="@+id/space"/>
+                    android:layout_height="wrap_content"
+                    android:id="@+id/mediaDetailSpacer"/>
             <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="fill_parent"

@@ -48,6 +48,7 @@ public class MediaDetailFragment extends SherlockFragment {
     //private EditText title;
     private ProgressBar loadingProgress;
     private ImageView loadingFailed;
+    private MediaDetailSpacer spacer;
     private TextView title;
     private TextView desc;
     private LinearLayout categoryList;
@@ -76,6 +77,7 @@ public class MediaDetailFragment extends SherlockFragment {
 
         View view = inflater.inflate(R.layout.fragment_media_detail, container, false);
         image = (ImageView) view.findViewById(R.id.mediaDetailImage);
+        spacer = (MediaDetailSpacer) view.findViewById(R.id.mediaDetailSpacer);
         title = (TextView) view.findViewById(R.id.mediaDetailTitle);
         loadingProgress = (ProgressBar) view.findViewById(R.id.mediaDetailImageLoading);
         loadingFailed = (ImageView) view.findViewById(R.id.mediaDetailImageFailed);
