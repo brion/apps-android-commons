@@ -149,8 +149,9 @@ public class MediaDetailFragment extends SherlockFragment {
                     categoryNames = cats;
                     categoryList.removeAllViews();
                     for (String name : categoryNames) {
-                        TextView view = (TextView)getActivity().getLayoutInflater().inflate(R.layout.detail_category_item, null, false);
-                        view.setText(name);
+                        View view = getActivity().getLayoutInflater().inflate(R.layout.detail_category_item, null, false);
+                        TextView textView = (TextView)view.findViewById(R.id.mediaDetailCategoryItemText);
+                        textView.setText(name);
                         categoryList.addView(view);
                     }
                 }
