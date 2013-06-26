@@ -4,6 +4,7 @@ import android.graphics.*;
 import android.os.*;
 import android.text.*;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.*;
 import android.widget.*;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -53,6 +54,7 @@ public class MediaDetailFragment extends SherlockFragment {
     private TextView desc;
     private LinearLayout categoryList;
     private ArrayList<String> categoryNames;
+    private ViewTreeObserver.OnGlobalLayoutListener observer; // for layout stuff, only used once!
 
 
     @Override
@@ -198,12 +200,26 @@ public class MediaDetailFragment extends SherlockFragment {
         });
         */
 
-        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        observer = new ViewTreeObserver.OnGlobalLayoutListener() {
             public void onGlobalLayout() {
-                int height = view.getHeight();
-                spacer.setMinimumHeight(height - 120);
+                // Only need this once
+                if (observer != null) {
+                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                        view.getViewTreeObserver().removeGlobalOnLayoutListener(observer); // old Android was on crack. CRACK IS WHACK
+                    } else {
+                        view.getViewTreeObserver().removeOnGlobalLayoutListener(observer); // new Android spells method names correctly
+                    }
+                    observer = null;
+                }
+
+                int viewHeight = view.getHeight();
+                //int textHeight = title.getLineHeight();
+                int paddingDp = 48;
+                float paddingPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, paddingDp, getResources().getDisplayMetrics());
+                spacer.setMinimumHeight(viewHeight - Math.round(paddingPx));
             }
-        });
+        };
+        view.getViewTreeObserver().addOnGlobalLayoutListener(observer);
         return view;
     }
 

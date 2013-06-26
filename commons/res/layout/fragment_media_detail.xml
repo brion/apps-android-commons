@@ -37,10 +37,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-            <!-- Placeholder. Size is fictional, gets set at runtime based on container size. May be a better way to do this. -->
+            <!-- Placeholder. minHeight gets set at runtime based on container size; the initial value is a hack to keep
+                 the detail info offscreen until it's placed properly. May be a better way to do this. -->
             <org.wikimedia.commons.media.MediaDetailSpacer
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="1600dp"
                     android:id="@+id/mediaDetailSpacer"/>
             <LinearLayout
                     android:orientation="vertical"
