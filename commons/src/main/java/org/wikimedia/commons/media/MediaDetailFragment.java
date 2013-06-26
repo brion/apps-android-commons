@@ -212,18 +212,20 @@ public class MediaDetailFragment extends SherlockFragment {
         // Layout observer to size the spacer item relative to the available space.
         // There may be a .... better way to do this.
         observer = new ViewTreeObserver.OnGlobalLayoutListener() {
-            private int currentMinHeight = -1;
+            private int currentHeight = -1;
 
             public void onGlobalLayout() {
                 int viewHeight = view.getHeight();
                 //int textHeight = title.getLineHeight();
                 int paddingDp = 48;
                 float paddingPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, paddingDp, getResources().getDisplayMetrics());
-                int newMinHeight = viewHeight - Math.round(paddingPx);
+                int newHeight = viewHeight - Math.round(paddingPx);
 
-                if (newMinHeight != currentMinHeight) {
-                    currentMinHeight = newMinHeight;
-                    spacer.setMinimumHeight(newMinHeight);
+                if (newHeight != currentHeight) {
+                    currentHeight = newHeight;
+                    ViewGroup.LayoutParams params = spacer.getLayoutParams();
+                    params.height = newHeight;
+                    spacer.setLayoutParams(params);
 
                     // hack hack to trigger relayout
                     categoryAdapter.notifyDataSetChanged();
