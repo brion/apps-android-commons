@@ -52,8 +52,9 @@ public class MediaDetailFragment extends SherlockFragment {
     private MediaDetailSpacer spacer;
     private TextView title;
     private TextView desc;
-    private LinearLayout categoryList;
+    private ListView listView;
     private ArrayList<String> categoryNames;
+    private ArrayAdapter categoryAdapter;
     private ViewTreeObserver.OnGlobalLayoutListener observer; // for layout stuff, only used once!
     private AsyncTask<Void,Void,Void> detailFetchTask;
 
@@ -77,16 +78,24 @@ public class MediaDetailFragment extends SherlockFragment {
             index = getArguments().getInt("index");
         }
         final Media media = detailProvider.getMediaAtPosition(index);
+        categoryNames = new ArrayList<String>();
 
         final View view = inflater.inflate(R.layout.fragment_media_detail, container, false);
+
         image = (ImageView) view.findViewById(R.id.mediaDetailImage);
-        spacer = (MediaDetailSpacer) view.findViewById(R.id.mediaDetailSpacer);
-        title = (TextView) view.findViewById(R.id.mediaDetailTitle);
         loadingProgress = (ProgressBar) view.findViewById(R.id.mediaDetailImageLoading);
         loadingFailed = (ImageView) view.findViewById(R.id.mediaDetailImageFailed);
-        desc = (TextView) view.findViewById(R.id.mediaDetailDesc);
-        categoryList = (LinearLayout) view.findViewById(R.id.mediaDetailCategoryList);
-        categoryNames = new ArrayList<String>();
+        listView = (ListView) view.findViewById(R.id.mediaDetailListView);
+
+        // Detail consists of a list view with main pane in header view, plus category list.
+        View detailView = getActivity().getLayoutInflater().inflate(R.layout.detail_main_panel, null, false);
+        listView.addHeaderView(detailView);
+        categoryAdapter = new ArrayAdapter(getActivity(), R.layout.detail_category_item, categoryNames);
+        listView.setAdapter(categoryAdapter);
+
+        spacer = (MediaDetailSpacer) detailView.findViewById(R.id.mediaDetailSpacer);
+        title = (TextView) detailView.findViewById(R.id.mediaDetailTitle);
+        desc = (TextView) detailView.findViewById(R.id.mediaDetailDesc);
 
         // Enable or disable editing on the title
         /*
@@ -98,6 +107,7 @@ public class MediaDetailFragment extends SherlockFragment {
             title.setBackgroundDrawable(null);
         }
         */
+
 
         String actualUrl = TextUtils.isEmpty(media.getImageUrl()) ? media.getLocalUri().toString() : media.getThumbnailUrl(640);
         if(actualUrl.startsWith("http")) {
@@ -146,14 +156,9 @@ public class MediaDetailFragment extends SherlockFragment {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     detailFetchTask = null;
-                    categoryNames = cats;
-                    categoryList.removeAllViews();
-                    for (String name : categoryNames) {
-                        View view = getActivity().getLayoutInflater().inflate(R.layout.detail_category_item, null, false);
-                        TextView textView = (TextView)view.findViewById(R.id.mediaDetailCategoryItemText);
-                        textView.setText(name);
-                        categoryList.addView(view);
-                    }
+                    categoryNames.removeAll(categoryNames);
+                    categoryNames.addAll(cats);
+                    categoryAdapter.notifyDataSetChanged();
                 }
             };
             Utils.executeAsyncTask(detailFetchTask);
