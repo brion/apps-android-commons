@@ -209,23 +209,25 @@ public class MediaDetailFragment extends SherlockFragment {
         });
         */
 
+        // Layout observer to size the spacer item relative to the available space.
+        // There may be a .... better way to do this.
         observer = new ViewTreeObserver.OnGlobalLayoutListener() {
-            public void onGlobalLayout() {
-                // Only need this once
-                if (observer != null) {
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                        view.getViewTreeObserver().removeGlobalOnLayoutListener(observer); // old Android was on crack. CRACK IS WHACK
-                    } else {
-                        view.getViewTreeObserver().removeOnGlobalLayoutListener(observer); // new Android spells method names correctly
-                    }
-                    observer = null;
-                }
+            private int currentMinHeight = -1;
 
+            public void onGlobalLayout() {
                 int viewHeight = view.getHeight();
                 //int textHeight = title.getLineHeight();
                 int paddingDp = 48;
                 float paddingPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, paddingDp, getResources().getDisplayMetrics());
-                spacer.setMinimumHeight(viewHeight - Math.round(paddingPx));
+                int newMinHeight = viewHeight - Math.round(paddingPx);
+
+                if (newMinHeight != currentMinHeight) {
+                    currentMinHeight = newMinHeight;
+                    spacer.setMinimumHeight(newMinHeight);
+
+                    // hack hack to trigger relayout
+                    categoryAdapter.notifyDataSetChanged();
+                }
             }
         };
         view.getViewTreeObserver().addOnGlobalLayoutListener(observer);
@@ -244,6 +246,10 @@ public class MediaDetailFragment extends SherlockFragment {
         if (detailFetchTask != null) {
             detailFetchTask.cancel(true);
             detailFetchTask = null;
+        }
+        if (observer != null) {
+            getView().getViewTreeObserver().removeGlobalOnLayoutListener(observer); // old Android was on crack. CRACK IS WHACK
+            observer = null;
         }
         super.onDestroyView();
     }

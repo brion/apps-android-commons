@@ -33,6 +33,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/mediaDetailListView"
             android:divider="#00A0A0A0"
+            android:fillViewport="true"
+            android:background="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
             />
 
 </FrameLayout>
