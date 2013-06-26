@@ -135,7 +135,7 @@ public class MediaDetailFragment extends SherlockFragment {
                         Log.d("Commons", "xml: " + parseTreeXmlSource);
 
                         for (ApiResult cl : result.getNodes("/api/query/pages/page/categories/cl")) {
-                            cats.add(cl.getString("@title"));
+                            cats.add(cl.getString("@title").substring("Category:".length()));
                         }
                     } catch (IOException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
