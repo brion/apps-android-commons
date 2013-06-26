@@ -55,6 +55,7 @@ public class MediaDetailFragment extends SherlockFragment {
     private LinearLayout categoryList;
     private ArrayList<String> categoryNames;
     private ViewTreeObserver.OnGlobalLayoutListener observer; // for layout stuff, only used once!
+    private AsyncTask<Void,Void,Void> detailFetchTask;
 
 
     @Override
@@ -110,7 +111,7 @@ public class MediaDetailFragment extends SherlockFragment {
             // Load image metadata: desc, license, categories
             // FIXME: keep the spinner going while we load data
             // FIXME: cache this data
-            Utils.executeAsyncTask(new AsyncTask<Void, Void, Void>() {
+            detailFetchTask = new AsyncTask<Void, Void, Void>() {
                 private ArrayList<String> cats;
 
                 @Override
@@ -144,6 +145,7 @@ public class MediaDetailFragment extends SherlockFragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
+                    detailFetchTask = null;
                     categoryNames = cats;
                     categoryList.removeAllViews();
                     for (String name : categoryNames) {
@@ -152,7 +154,8 @@ public class MediaDetailFragment extends SherlockFragment {
                         categoryList.addView(view);
                     }
                 }
-            });
+            };
+            Utils.executeAsyncTask(detailFetchTask);
         } else {
             com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(actualUrl, image, displayOptions, new ImageLoadingListener() {
                 public void onLoadingStarted(String s, View view) {
@@ -228,5 +231,14 @@ public class MediaDetailFragment extends SherlockFragment {
         super.onActivityCreated(savedInstanceState);
 
         displayOptions = Utils.getGenericDisplayOptions().build();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (detailFetchTask != null) {
+            detailFetchTask.cancel(true);
+            detailFetchTask = null;
+        }
+        super.onDestroyView();
     }
 }
