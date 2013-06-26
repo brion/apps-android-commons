@@ -56,7 +56,8 @@
                         android:text="Title of the media"
                         android:id="@+id/mediaDetailTitle"
                         android:layout_gravity="left|start"
-                        android:textColor="@android:color/white"/>
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" /> <!-- 18sp == MediumText -->
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
