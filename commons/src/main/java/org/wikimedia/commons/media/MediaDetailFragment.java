@@ -133,17 +133,20 @@ public class MediaDetailFragment extends SherlockFragment {
             // FIXME: keep the spinner going while we load data
             // FIXME: cache this data
             detailFetchTask = new AsyncTask<Void, Void, Void>() {
-                private MediaDataExtractor extractor;
+                private String fileTitle;
+                private MediaDetailInfo info;
 
                 @Override
                 protected void onPreExecute() {
-                    extractor = new MediaDataExtractor(media.getFilename());
+                    fileTitle = media.getFilename();
                 }
 
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
+                        MediaDataExtractor extractor = new MediaDataExtractor(fileTitle);
                         extractor.fetch();
+                        info = extractor.getInfo();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -154,14 +157,14 @@ public class MediaDetailFragment extends SherlockFragment {
                 protected void onPostExecute(Void aVoid) {
                     detailFetchTask = null;
 
-                    MediaDetailInfo info = extractor.getInfo();
+                    if (info != null) {
+                        // Fill some fields
+                        desc.setText(info.getDescription("en"));
 
-                    // Fill some fields
-                    desc.setText(info.getDescription("en"));
-
-                    categoryNames.removeAll(categoryNames);
-                    categoryNames.addAll(info.getCategories());
-                    categoryAdapter.notifyDataSetChanged();
+                        categoryNames.removeAll(categoryNames);
+                        categoryNames.addAll(info.getCategories());
+                        categoryAdapter.notifyDataSetChanged();
+                    }
                 }
             };
             Utils.executeAsyncTask(detailFetchTask);
