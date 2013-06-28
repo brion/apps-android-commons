@@ -1,6 +1,8 @@
 package org.wikimedia.commons.media;
 
+import android.content.Intent;
 import android.graphics.*;
+import android.net.Uri;
 import android.os.*;
 import android.text.*;
 import android.util.Log;
@@ -92,6 +94,15 @@ public class MediaDetailFragment extends SherlockFragment {
         listView.addHeaderView(detailView, null, false);
         categoryAdapter = new ArrayAdapter(getActivity(), R.layout.detail_category_item, categoryNames);
         listView.setAdapter(categoryAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String selectedCategoryTitle = "Category:" + categoryNames.get(position);
+                Intent viewIntent = new Intent();
+                viewIntent.setAction(Intent.ACTION_VIEW);
+                viewIntent.setData(Utils.uriForWikiPage(selectedCategoryTitle));
+                startActivity(viewIntent);
+            }
+        });
 
         spacer = (MediaDetailSpacer) detailView.findViewById(R.id.mediaDetailSpacer);
         title = (TextView) detailView.findViewById(R.id.mediaDetailTitle);

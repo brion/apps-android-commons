@@ -1,5 +1,6 @@
 package org.wikimedia.commons;
 
+import android.net.Uri;
 import android.os.*;
 import com.nostra13.universalimageloader.core.*;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
@@ -186,5 +187,11 @@ public class Utils {
             buffer.append(pieces);
         }
         return buffer.toString();
+    }
+
+    public static Uri uriForWikiPage(String name) {
+        String underscored = name.trim().replace(" ", "_");
+        String uriStr = CommonsApplication.HOME_URL + urlEncode(underscored);
+        return Uri.parse(uriStr);
     }
 }
