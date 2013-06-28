@@ -1,5 +1,7 @@
 package org.wikimedia.commons;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
@@ -22,6 +24,7 @@ public class MediaDetailInfo {
     }
 
     public String getDescription(String preferredLanguage) {
+        Log.d("Commons", "descriptions for langs: " + Utils.implode(", ", descriptions.keySet()));
         if (descriptions.containsKey(preferredLanguage)) {
             // See if the requested language is there.
             return descriptions.get(preferredLanguage);

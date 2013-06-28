@@ -96,8 +96,9 @@ public class MediaDataExtractor {
         NodeList nodes = parentNode.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeName() == "template") {
-                if (Utils.capitalize(getTemplateTitle(node)).equals(ucTitle)) {
+            if (node.getNodeName().equals("template")) {
+                String foundTitle = getTemplateTitle(node);
+                if (Utils.capitalize(foundTitle).equals(ucTitle)) {
                     return node;
                 }
             }
@@ -109,7 +110,7 @@ public class MediaDataExtractor {
         NodeList nodes = templateNode.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeName() == "title") {
+            if (node.getNodeName().equals("title")) {
                 return node.getTextContent().trim();
             }
         }
@@ -151,16 +152,16 @@ public class MediaDataExtractor {
         NodeList nodes = templateNode.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeName() == "part") {
+            if (node.getNodeName().equals("part")) {
                 NodeList childNodes = node.getChildNodes();
                 for (int j = 0; j < childNodes.getLength(); j++) {
                     Node childNode = childNodes.item(j);
-                    if (childNode.getNodeName() == "name") {
+                    if (childNode.getNodeName().equals("name")) {
                         if (comparator.match(childNode)) {
                             // yay! Now fetch the value node.
                             for (int k = j + 1; k < childNodes.getLength(); k++) {
                                 Node siblingNode = childNodes.item(k);
-                                if (siblingNode.getNodeName() == "value") {
+                                if (siblingNode.getNodeName().equals("value")) {
                                     return siblingNode;
                                 }
                             }
@@ -183,7 +184,7 @@ public class MediaDataExtractor {
         NodeList nodes = parentNode.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            if (node.getNodeName() == "template") {
+            if (node.getNodeName().equals("template")) {
                 // process a template node
                 String title = getTemplateTitle(node);
                 if (title.length() < 3) {
