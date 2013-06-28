@@ -96,7 +96,7 @@ public class MediaDetailFragment extends SherlockFragment {
         listView.setAdapter(categoryAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String selectedCategoryTitle = "Category:" + categoryNames.get(position);
+                String selectedCategoryTitle = "Category:" + categoryNames.get(position - 1);
                 Intent viewIntent = new Intent();
                 viewIntent.setAction(Intent.ACTION_VIEW);
                 viewIntent.setData(Utils.uriForWikiPage(selectedCategoryTitle));
