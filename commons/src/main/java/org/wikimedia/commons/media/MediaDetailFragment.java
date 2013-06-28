@@ -122,33 +122,19 @@ public class MediaDetailFragment extends SherlockFragment {
             // FIXME: keep the spinner going while we load data
             // FIXME: cache this data
             detailFetchTask = new AsyncTask<Void, Void, Void>() {
-                private ArrayList<String> cats;
+                private MediaDataExtractor extractor;
+
+                @Override
+                protected void onPreExecute() {
+                    extractor = new MediaDataExtractor(media.getFilename());
+                }
 
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    cats = new ArrayList<String>();
-                    MWApi api = CommonsApplication.createMWApi();
                     try {
-                        ApiResult result = api.action("query")
-                                .param("prop", "revisions|categories")
-                                .param("titles", media.getFilename())
-                                .param("rvprop", "content")
-                                .param("rvlimit", 1)
-                                .param("rvgeneratexml", 1)
-                                .get();
-
-                        String wikiSource = result.getString("/api/query/pages/page/revisions/rev");
-                        String parseTreeXmlSource = result.getString("/api/query/pages/page/revisions/rev/@parsetree");
-
-                        Log.d("Commons", "media title: " + media.getFilename());
-                        Log.d("Commons", "wiki: " + wikiSource);
-                        Log.d("Commons", "xml: " + parseTreeXmlSource);
-
-                        for (ApiResult cl : result.getNodes("/api/query/pages/page/categories/cl")) {
-                            cats.add(cl.getString("@title").substring("Category:".length()));
-                        }
+                        extractor.fetch();
                     } catch (IOException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        e.printStackTrace();
                     }
                     return null;
                 }
@@ -156,8 +142,14 @@ public class MediaDetailFragment extends SherlockFragment {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     detailFetchTask = null;
+
+                    MediaDetailInfo info = extractor.getInfo();
+
+                    // Fill some fields
+                    desc.setText(info.getDescription("en"));
+
                     categoryNames.removeAll(categoryNames);
-                    categoryNames.addAll(cats);
+                    categoryNames.addAll(info.getCategories());
                     categoryAdapter.notifyDataSetChanged();
                 }
             };
