@@ -1,5 +1,7 @@
 <resources>
 
+    <style name="AppTheme" parent="android:Theme.Holo" />
+    <style name="LightNoTitle" parent="android:Theme.Holo.Light.NoActionBar"></style>
     <style name="ProgressBar" parent="android:Widget.Holo.ProgressBar.Horizontal" />
 
 </resources>

@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.Holo" />
-    <style name="LightNoTitle" parent="android:Theme.Holo.Light.NoActionBar"></style>
+    <style name="AppTheme" parent="Theme.Sherlock" />
+    <style name="LightNoTitle" parent="Theme.Sherlock.Light.NoActionBar"></style>
 
 </resources>
