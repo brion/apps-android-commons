@@ -16,6 +16,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Fetch additional media data from the network that we don't store locally.
+ *
+ * This includes things like category lists and multilingual descriptions,
+ * which are not intrinsic to the media and may change due to editing.
+ */
 public class MediaDataExtractor {
     private boolean fetched;
     private boolean processed;
@@ -26,6 +32,9 @@ public class MediaDataExtractor {
     private String author;
     private Date date;
 
+    /**
+     * @param filename of the target media object, should include 'File:' prefix
+     */
     public MediaDataExtractor(String filename) {
         this.filename = filename;
         categories = new ArrayList<String>();
@@ -34,7 +43,12 @@ public class MediaDataExtractor {
         processed = false;
     }
 
-    /* Warning: synchronous i/o, call on a background thread */
+    /**
+     * Actually fetch the data over the network.
+     * todo: use local caching?
+     *
+     * Warning: synchronous i/o, call on a background thread
+     */
     public void fetch() throws IOException {
         if (fetched) {
             throw new IllegalStateException("Tried to call MediaDataExtractor.fetch() again.");
@@ -207,6 +221,11 @@ public class MediaDataExtractor {
         return texts;
     }
 
+    /**
+     * Take our metadata and inject it into a live Media object.
+     * Media object might contain stale or cached data, or emptiness.
+     * @param media
+     */
     public void fill(Media media) {
         if (!fetched) {
             throw new IllegalStateException("Tried to call MediaDataExtractor.fill() before fetch().");
