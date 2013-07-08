@@ -2,6 +2,7 @@ package org.wikimedia.commons;
 
 import android.net.Uri;
 import android.os.*;
+import android.util.Log;
 
 import java.util.*;
 import java.util.regex.*;
@@ -127,10 +128,11 @@ public class Media implements Parcelable {
         this.license = license;
     }
 
+    // Primary metadata fields
     protected Uri localUri;
     protected String imageUrl;
     protected String filename;
-    protected String description;
+    protected String description; // monolingual description on input...
     protected long dataLength;
     protected Date dateCreated;
     protected Date dateUploaded;
@@ -141,6 +143,43 @@ public class Media implements Parcelable {
 
     protected String creator;
 
+    protected ArrayList<String> categories; // as loaded at runtime?
+    protected Map<String, String> descriptions; // multilingual descriptions as loaded
+
+    public ArrayList<String> getCategories() {
+        return (ArrayList<String>)categories.clone(); // feels dirty
+    }
+
+    public void setCategories(List<String> categories) {
+        Log.d("Commons", "WTF categories is " + this.categories);
+        this.categories.removeAll(this.categories);
+        this.categories.addAll(categories);
+    }
+
+    public void setDescriptions(Map<String,String> descriptions) {
+        for (String key : this.descriptions.keySet()) {
+            this.descriptions.remove(key);
+        }
+        for (String key : descriptions.keySet()) {
+            this.descriptions.put(key, descriptions.get(key));
+        }
+    }
+
+    public String getDescription(String preferredLanguage) {
+        if (descriptions.containsKey(preferredLanguage)) {
+            // See if the requested language is there.
+            return descriptions.get(preferredLanguage);
+        } else if (descriptions.containsKey("en")) {
+            // Ah, English. Language of the world, until the Chinese crush us.
+            return descriptions.get("en");
+        } else if (descriptions.containsKey("default")) {
+            // No languages marked...
+            return descriptions.get("default");
+        } else {
+            // FIXME: return the first available non-English description?
+            return "";
+        }
+    }
 
     public Media(Uri localUri, String imageUrl, String filename, String description, long dataLength, Date dateCreated, Date dateUploaded, String creator) {
         this.localUri = localUri;
@@ -151,6 +190,11 @@ public class Media implements Parcelable {
         this.dateCreated = dateCreated;
         this.dateUploaded = dateUploaded;
         this.creator = creator;
+
+        // These fields get filled out at runtime later...?
+        this.categories = new ArrayList<String>();
+        Log.d("Commons", "WTF1 categories is " + this.categories);
+        this.descriptions = new HashMap<String, String>();
     }
 
     public int describeContents() {
@@ -170,6 +214,8 @@ public class Media implements Parcelable {
         parcel.writeInt(width);
         parcel.writeInt(height);
         parcel.writeString(license);
+        parcel.writeStringList(categories);
+        parcel.writeMap(descriptions);
     }
 
     public Media(Parcel in) {
@@ -185,6 +231,9 @@ public class Media implements Parcelable {
         width = in.readInt();
         height = in.readInt();
         license = in.readString();
+        in.readStringList(categories);
+        Log.d("Commons", "WTF2 categories is " + this.categories);
+        descriptions = in.readHashMap(ClassLoader.getSystemClassLoader());
     }
 
     public void setDescription(String description) {

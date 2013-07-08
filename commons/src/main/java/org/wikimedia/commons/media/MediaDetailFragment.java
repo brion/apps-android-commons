@@ -58,7 +58,7 @@ public class MediaDetailFragment extends SherlockFragment {
     private ArrayList<String> categoryNames;
     private ArrayAdapter categoryAdapter;
     private ViewTreeObserver.OnGlobalLayoutListener observer; // for layout stuff, only used once!
-    private AsyncTask<Void,Void,Void> detailFetchTask;
+    private AsyncTask<Void,Void,Boolean> detailFetchTask;
 
 
     @Override
@@ -132,37 +132,37 @@ public class MediaDetailFragment extends SherlockFragment {
             // Load image metadata: desc, license, categories
             // FIXME: keep the spinner going while we load data
             // FIXME: cache this data
-            detailFetchTask = new AsyncTask<Void, Void, Void>() {
-                private String fileTitle;
-                private MediaDetailInfo info;
+            detailFetchTask = new AsyncTask<Void, Void, Boolean>() {
+                private MediaDataExtractor extractor;
 
                 @Override
                 protected void onPreExecute() {
-                    fileTitle = media.getFilename();
+                    extractor = new MediaDataExtractor(media.getFilename());
                 }
 
                 @Override
-                protected Void doInBackground(Void... voids) {
+                protected Boolean doInBackground(Void... voids) {
                     try {
-                        MediaDataExtractor extractor = new MediaDataExtractor(fileTitle);
                         extractor.fetch();
-                        info = extractor.getInfo();
+                        return Boolean.TRUE;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    return null;
+                    return Boolean.FALSE;
                 }
 
                 @Override
-                protected void onPostExecute(Void aVoid) {
+                protected void onPostExecute(Boolean success) {
                     detailFetchTask = null;
 
-                    if (info != null) {
+                    if (success.booleanValue()) {
+                        extractor.fill(media);
+
                         // Fill some fields
-                        desc.setText(info.getDescription("en"));
+                        desc.setText(media.getDescription("en"));
 
                         categoryNames.removeAll(categoryNames);
-                        categoryNames.addAll(info.getCategories());
+                        categoryNames.addAll(media.getCategories());
                         categoryAdapter.notifyDataSetChanged();
                     }
                 }
