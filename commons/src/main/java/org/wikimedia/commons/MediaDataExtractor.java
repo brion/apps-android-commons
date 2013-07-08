@@ -15,6 +15,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Fetch additional media data from the network that we don't store locally.
@@ -55,9 +57,8 @@ public class MediaDataExtractor {
         }
 
         MWApi api = CommonsApplication.createMWApi();
-        // FIXME: cllimit?
         ApiResult result = api.action("query")
-                .param("prop", "revisions|categories")
+                .param("prop", "revisions")
                 .param("titles", filename)
                 .param("rvprop", "content")
                 .param("rvlimit", 1)
@@ -73,14 +74,26 @@ public class MediaDataExtractor {
         String wikiSource = result.getString("/api/query/pages/page/revisions/rev");
         String parseTreeXmlSource = result.getString("/api/query/pages/page/revisions/rev/@parsetree");
 
-        // For now, get the categories list from table. This will include cats
-        // added via templates, so beware.
-        for (ApiResult cl : result.getNodes("/api/query/pages/page/categories/cl")) {
-            categories.add(cl.getString("@title").substring("Category:".length()));
-        }
+        // In-page category links are extracted from source, as XML doesn't cover [[links]]
+        extractCategories(wikiSource);
 
         // Description template info is extracted from preprocessor XML
         processWikiParseTree(parseTreeXmlSource);
+    }
+
+    /**
+     * We could fetch all category links from API, but we actually only want the ones
+     * directly in the page source so they're editable. In the future this may change.
+     *
+     * @param source wikitext source code
+     */
+    private void extractCategories(String source) {
+        Pattern regex = Pattern.compile("\\[\\[\\s*Category\\s*:([^]]*)\\s*\\]\\]", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = regex.matcher(source);
+        while (matcher.find()) {
+            String cat = matcher.group(1).trim();
+            categories.add(cat);
+        }
     }
 
     private void processWikiParseTree(String source) throws IOException {
