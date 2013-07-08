@@ -207,16 +207,14 @@ public class MediaDataExtractor {
         return texts;
     }
 
-    public MediaDetailInfo getInfo() {
+    public void fill(Media media) {
         if (!fetched) {
-            throw new IllegalStateException("Tried to call MediaDataExtractor.getInfo() before fetch().");
+            throw new IllegalStateException("Tried to call MediaDataExtractor.fill() before fetch().");
         }
 
-        return new MediaDetailInfo(
-                categories,
-                descriptions,
-                author,
-                date
-        );
+        media.setCategories(categories);
+        media.setDescriptions(descriptions);
+
+        // add author, date, etc fields
     }
 }
