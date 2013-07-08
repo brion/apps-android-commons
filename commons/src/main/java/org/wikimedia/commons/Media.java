@@ -20,6 +20,8 @@ public class Media implements Parcelable {
     };
 
     protected Media() {
+        this.categories = new ArrayList<String>();
+        this.descriptions = new HashMap<String, String>();
     }
 
     private HashMap<String, Object> tags = new HashMap<String, Object>();
@@ -151,7 +153,6 @@ public class Media implements Parcelable {
     }
 
     public void setCategories(List<String> categories) {
-        Log.d("Commons", "WTF categories is " + this.categories);
         this.categories.removeAll(this.categories);
         this.categories.addAll(categories);
     }
@@ -182,6 +183,7 @@ public class Media implements Parcelable {
     }
 
     public Media(Uri localUri, String imageUrl, String filename, String description, long dataLength, Date dateCreated, Date dateUploaded, String creator) {
+        this();
         this.localUri = localUri;
         this.imageUrl = imageUrl;
         this.filename = filename;
@@ -190,11 +192,6 @@ public class Media implements Parcelable {
         this.dateCreated = dateCreated;
         this.dateUploaded = dateUploaded;
         this.creator = creator;
-
-        // These fields get filled out at runtime later...?
-        this.categories = new ArrayList<String>();
-        Log.d("Commons", "WTF1 categories is " + this.categories);
-        this.descriptions = new HashMap<String, String>();
     }
 
     public int describeContents() {
@@ -232,7 +229,6 @@ public class Media implements Parcelable {
         height = in.readInt();
         license = in.readString();
         in.readStringList(categories);
-        Log.d("Commons", "WTF2 categories is " + this.categories);
         descriptions = in.readHashMap(ClassLoader.getSystemClassLoader());
     }
 
