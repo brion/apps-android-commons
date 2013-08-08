@@ -118,33 +118,19 @@ public class CommonsApplication extends Application {
     }
 
     private com.android.volley.toolbox.ImageLoader imageLoader;
-    // based off https://developer.android.com/training/displaying-bitmaps/cache-bitmap.html
-    // Cache for 1/8th of available VM memory
-    private LruCache<String, Bitmap> imageCache = new LruCache<String, Bitmap>((int) (Runtime.getRuntime().maxMemory() / (1024 * 8))) {
-        @Override
-        protected int sizeOf(String key, Bitmap bitmap) {
-            // bitmap.getByteCount() not available on older androids
-            int bitmapSize;
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
-                bitmapSize = bitmap.getRowBytes() * bitmap.getHeight();
-            } else {
-                bitmapSize = bitmap.getByteCount();
-            }
-            // The cache size will be measured in kilobytes rather than
-            // number of items.
-            return bitmapSize / 1024;
-        }
-    };
 
     public com.android.volley.toolbox.ImageLoader getImageLoader() {
         if(imageLoader == null) {
+            // Don't use an LRU bitmap cache; on some devices you just run out of RAM fast.
+            // Volley handles disk-based caching of compressed images, which is saner.
             imageLoader = new com.android.volley.toolbox.ImageLoader(volleyQueue, new com.android.volley.toolbox.ImageLoader.ImageCache() {
                 public Bitmap getBitmap(String key) {
-                    return imageCache.get(key);
+                    // Fake!
+                    return null;
                 }
 
                 public void putBitmap(String key, Bitmap bitmap) {
-                    imageCache.put(key, bitmap);
+                    // Fake!
                 }
             });
             imageLoader.setBatchedResponseDelay(0);
