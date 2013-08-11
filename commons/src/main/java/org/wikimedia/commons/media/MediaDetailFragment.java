@@ -56,6 +56,8 @@ public class MediaDetailFragment extends SherlockFragment {
     private TextView desc;
     private ListView listView;
     private ArrayList<String> categoryNames;
+    private boolean categoriesLoaded = false;
+    private boolean categoriesPresent = false;
     private ArrayAdapter categoryAdapter;
     private ViewTreeObserver.OnGlobalLayoutListener observer; // for layout stuff, only used once!
     private AsyncTask<Void,Void,Boolean> detailFetchTask;
@@ -81,6 +83,7 @@ public class MediaDetailFragment extends SherlockFragment {
         }
         final Media media = detailProvider.getMediaAtPosition(index);
         categoryNames = new ArrayList<String>();
+        categoryNames.add(getString(R.string.detail_panel_cats_loading));
 
         final View view = inflater.inflate(R.layout.fragment_media_detail, container, false);
 
@@ -96,11 +99,13 @@ public class MediaDetailFragment extends SherlockFragment {
         listView.setAdapter(categoryAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String selectedCategoryTitle = "Category:" + categoryNames.get(position - 1);
-                Intent viewIntent = new Intent();
-                viewIntent.setAction(Intent.ACTION_VIEW);
-                viewIntent.setData(Utils.uriForWikiPage(selectedCategoryTitle));
-                startActivity(viewIntent);
+                if (categoriesLoaded && categoriesPresent) {
+                    String selectedCategoryTitle = "Category:" + categoryNames.get(position - 1);
+                    Intent viewIntent = new Intent();
+                    viewIntent.setAction(Intent.ACTION_VIEW);
+                    viewIntent.setData(Utils.uriForWikiPage(selectedCategoryTitle));
+                    startActivity(viewIntent);
+                }
             }
         });
 
@@ -163,7 +168,17 @@ public class MediaDetailFragment extends SherlockFragment {
 
                         categoryNames.removeAll(categoryNames);
                         categoryNames.addAll(media.getCategories());
+
+                        categoriesLoaded = true;
+                        categoriesPresent = (categoryNames.size() > 0);
+                        if (!categoriesPresent) {
+                            // Stick in a filler element.
+                            categoryNames.add(getString(R.string.detail_panel_cats_none));
+                        }
+
                         categoryAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.d("Commons", "Failed to load photo details.");
                     }
                 }
             };
