@@ -41,6 +41,8 @@ public class MediaDetailFragment extends SherlockFragment {
         Bundle state = new Bundle();
         state.putBoolean("editable", editable);
         state.putInt("index", index);
+        state.putInt("listIndex", 0);
+        state.putInt("listTop", 0);
 
         mf.setArguments(state);
 
@@ -52,6 +54,9 @@ public class MediaDetailFragment extends SherlockFragment {
     private ProgressBar loadingProgress;
     private ImageView loadingFailed;
     private MediaDetailSpacer spacer;
+    private int initialListIndex = 0;
+    private int initialListTop = 0;
+
     private TextView title;
     private TextView desc;
     private ListView listView;
@@ -68,6 +73,20 @@ public class MediaDetailFragment extends SherlockFragment {
         super.onSaveInstanceState(outState);
         outState.putInt("index", index);
         outState.putBoolean("editable", editable);
+
+        getScrollPosition();
+        outState.putInt("listIndex", initialListIndex);
+        outState.putInt("listTop", initialListTop);
+    }
+
+    private void getScrollPosition() {
+        int initialListIndex = listView.getFirstVisiblePosition();
+        View firstVisibleItem = listView.getChildAt(initialListIndex);
+        if (firstVisibleItem == null) {
+            initialListTop = 0;
+        } else {
+            initialListTop = firstVisibleItem.getTop();
+        }
     }
 
     @Override
@@ -77,6 +96,8 @@ public class MediaDetailFragment extends SherlockFragment {
         if(savedInstanceState != null) {
             editable = savedInstanceState.getBoolean("editable");
             index = savedInstanceState.getInt("index");
+            initialListIndex = savedInstanceState.getInt("listIndex");
+            initialListTop = savedInstanceState.getInt("listTop");
         } else {
             editable = getArguments().getBoolean("editable");
             index = getArguments().getInt("index");
@@ -250,7 +271,10 @@ public class MediaDetailFragment extends SherlockFragment {
 
                     // hack hack to trigger relayout
                     categoryAdapter.notifyDataSetChanged();
+
+                    listView.setSelectionFromTop(initialListIndex, initialListTop);
                 }
+
             }
         };
         view.getViewTreeObserver().addOnGlobalLayoutListener(observer);
